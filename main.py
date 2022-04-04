@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from urllib.parse import urlparse
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -27,9 +28,11 @@ class Ui_MainWindow(object):
         self.lineURL = QtWidgets.QLineEdit(self.centralwidget)
         self.lineURL.setGeometry(QtCore.QRect(90, 40, 300, 20))
         self.lineURL.setObjectName("lineURL")
+        self.lineURL.setText("https://google.com/")
         self.linePasswordMask = QtWidgets.QLineEdit(self.centralwidget)
         self.linePasswordMask.setGeometry(QtCore.QRect(90, 10, 300, 20))
         self.linePasswordMask.setObjectName("linePasswordMask")
+        self.linePasswordMask.setText("!@dts_")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(10, 70, 41, 16))
         self.label_3.setObjectName("label_3")
@@ -53,17 +56,28 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Маска пароля"))
         self.generateButton.clicked.connect(self.generatePassword)
 
+    def deleteVowels(self, domainString):
+        for i in "aeiouAEIOU.":
+            domainString = domainString.replace(i, "")
+        return domainString
+
     def generatePassword(self):
         stringURL = self.lineURL.text()
         passwordMask = self.linePasswordMask.text()
         errorMessageLines = ['Для продолжения необходимо заполнить:']
         if not stringURL:
-            errorMessageLines.append("STRING URL")
+            errorMessageLines.append("URL")
         if not passwordMask:
-            errorMessageLines.append("STRING MASK")
+            errorMessageLines.append("Маска пароля")
         errorMessage = '\n'.join(errorMessageLines)
-        print(errorMessage)
-
+        errorMessageRowsCount = errorMessage.count('\n')
+        if errorMessageRowsCount > 0:
+            print(errorMessage)
+        else:
+            domain = urlparse(stringURL).netloc
+            domainEdited = self.deleteVowels(domain)
+            passwordTemplate = "{0}_{1}{2}{3}".format(len(domainEdited), passwordMask, len(domain), domainEdited.upper())
+            self.linePassword.setText(passwordTemplate)
 
 if __name__ == "__main__":
     import sys
