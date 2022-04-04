@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 from urllib.parse import urlparse
 
 class Ui_MainWindow(object):
@@ -50,6 +51,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "giveMePassword"))
+        MainWindow.setWindowIcon(QtGui.QIcon('icon.png'))
         self.generateButton.setText(_translate("MainWindow", "Сгенерировать"))
         self.label_3.setText(_translate("MainWindow", "Пароль"))
         self.label_2.setText(_translate("MainWindow", "URL"))
@@ -65,14 +67,19 @@ class Ui_MainWindow(object):
         stringURL = self.lineURL.text()
         passwordMask = self.linePasswordMask.text()
         errorMessageLines = ['Для продолжения необходимо заполнить:']
-        if not stringURL:
-            errorMessageLines.append("URL")
         if not passwordMask:
             errorMessageLines.append("Маска пароля")
+        if not stringURL:
+            errorMessageLines.append("URL")
         errorMessage = '\n'.join(errorMessageLines)
         errorMessageRowsCount = errorMessage.count('\n')
         if errorMessageRowsCount > 0:
-            print(errorMessage)
+            errorWindow = QMessageBox()
+            errorWindow.setWindowTitle("Ошибка")
+            errorWindow.setWindowIcon(QtGui.QIcon('icon.png'))
+            errorWindow.setIcon(QMessageBox.Warning)
+            errorWindow.setText(errorMessage)
+            errorWindow.exec_()
         else:
             domain = urlparse(stringURL).netloc
             domainEdited = self.deleteVowels(domain)
