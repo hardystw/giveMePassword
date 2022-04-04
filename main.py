@@ -51,14 +51,19 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Пароль"))
         self.label_2.setText(_translate("MainWindow", "URL"))
         self.label.setText(_translate("MainWindow", "Маска пароля"))
-        self.generateButton.clicked.connect(self.doSomething)
+        self.generateButton.clicked.connect(self.generatePassword)
 
-    def doSomething(self):
+    def generatePassword(self):
         stringURL = self.lineURL.text()
-        if stringURL:
-            print(stringURL)
-        else:
-            print("Введите URL")
+        passwordMask = self.linePasswordMask.text()
+        errorMessageLines = ['Для продолжения необходимо заполнить:']
+        if not stringURL:
+            errorMessageLines.append("STRING URL")
+        if not passwordMask:
+            errorMessageLines.append("STRING MASK")
+        errorMessage = '\n'.join(errorMessageLines)
+        print(errorMessage)
+
 
 if __name__ == "__main__":
     import sys
